@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             x:Class="PC_Controller.ControlPage"
+             Title="Control Page">
+    <ContentPage.Content>
+        <StackLayout>
+            <Label x:Name="PCInfo1"
+                   HorizontalOptions="StartAndExpand"
+                   VerticalOptions="Start"/>
+            <Label x:Name="PCInfo2"/>
+            <Label x:Name="PowerInfo"/>
+            <Button Text="Serial"
+                    HorizontalOptions="Fill"
+                    VerticalOptions="Start"
+                    Clicked="Button_Clicked_3"/>
+            <Button Text="Log Off"
+                    HorizontalOptions="Fill"
+                    VerticalOptions="Start"
+                    Clicked="Button_Clicked_1"/>
+            <Button Text="Shutdown"
+                    HorizontalOptions="Fill"
+                    VerticalOptions="Start"
+                    Clicked="Button_Clicked_2"/>
+            <Button Text="Test"
+                    HorizontalOptions="Fill"
+                    VerticalOptions="Start"
+                    Clicked="Button_Clicked"/>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>
