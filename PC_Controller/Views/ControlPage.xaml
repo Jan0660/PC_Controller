@@ -5,7 +5,14 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
              x:Class="PC_Controller.ControlPage"
-             Title="Control Page">
+             Title="Control Page"
+             NavigationPage.HasBackButton="False">
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Disconnect"
+                 Order="Primary"
+                 Clicked="ToolbarItem_Clicked"
+                 Priority="0" />
+    </ContentPage.ToolbarItems>
     <ContentPage.Content>
         <StackLayout>
             <Label x:Name="PCInfo1"
@@ -13,10 +20,22 @@
                    VerticalOptions="Start"/>
             <Label x:Name="PCInfo2"/>
             <Label x:Name="PowerInfo"/>
+            <Button Text="File system"
+                    HorizontalOptions="Fill"
+                    VerticalOptions="Start"
+                    Clicked="Button_Clicked_4"/>
+            <Button Text="Server settings"
+                    HorizontalOptions="Fill"
+                    VerticalOptions="Start"
+                    Clicked="Button_Clicked_5"/>
             <Button Text="Serial"
                     HorizontalOptions="Fill"
                     VerticalOptions="Start"
                     Clicked="Button_Clicked_3"/>
+            <Button Text="Start process"
+                    HorizontalOptions="Fill"
+                    VerticalOptions="Start"
+                    Clicked="Button_Clicked_6"/>
             <Button Text="Log Off"
                     HorizontalOptions="Fill"
                     VerticalOptions="Start"

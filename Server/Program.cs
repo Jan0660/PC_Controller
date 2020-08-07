@@ -10,17 +10,28 @@ using System.Runtime.InteropServices;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO.Ports;
-using System.Management;
-using System.Management.Instrumentation;
 using Microsoft.VisualBasic.Devices;
 using System.Windows.Forms;
-using System.Runtime.Serialization;
+using System.Security.Principal;
+using Communication;
+using System.IO;
 
 namespace Server
 {
     class Program
     {
         #region variables and shit
+        [DllImport("kernel32.dll")]
+        static extern IntPtr GetConsoleWindow();
+
+        [DllImport("user32.dll")]
+        static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
+        const int SW_HIDE = 0;
+        const int SW_SHOW = 5;
+        static bool IsWindowHidden = false;
+        const int CompatibilityVersion = 1;
+        // Log off
         [DllImport("wtsapi32.dll", SetLastError = true)]
         static extern bool WTSDisconnectSession(IntPtr hServer, int sessionId, bool bWait);
 
@@ -30,6 +41,10 @@ namespace Server
         [return: MarshalAs(UnmanagedType.U1)]
         static extern bool GetPwrCapabilities(out SYSTEM_POWER_CAPABILITIES systemPowerCapabilites);
         static SYSTEM_POWER_CAPABILITIES systemPowerCapabilites;
+
+        public static bool IsAdministrator =>
+   new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator);
+
         static SerialPort serialPort;
 
         static PerformanceCounter cpuCounter;
@@ -40,12 +55,7 @@ namespace Server
             GetPwrCapabilities(out systemPowerCapabilites);
             try
             {
-                cpuCounter = new PerformanceCounter(
-            "Processor",
-            "% Processor Time",
-            "_Total",
-            true
-            );
+                cpuCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total", true);
                 IPEndPoint ipe = new IPEndPoint(IPAddress.Any, 255);
                 Socket listeningSocket = new Socket(ipe.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
                 listeningSocket.Bind(ipe);
@@ -54,6 +64,7 @@ namespace Server
                     listeningSocket.Listen(int.MaxValue);
                     Console.WriteLine("Listening for connection");
                     Socket socket = listeningSocket.Accept();
+                    // try to prevent weird shit
                     socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReceiveTimeout, int.MaxValue);
                     socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.SendTimeout, int.MaxValue);
                     Communication.Main.socket = socket;
@@ -62,6 +73,7 @@ namespace Server
                     {
                         string In = ReceiveData();
                         Console.WriteLine("Received \"" + In + "\"");
+                        // this is what's known as "readable code"
                         switch (In)
                         {
                             case "TEST":
@@ -73,12 +85,26 @@ namespace Server
                             case "LOGOFF":
                                 if (!WTSDisconnectSession(WTS_CURRENT_SERVER_HANDLE, WTS_CURRENT_SESSION, false))
                                     throw new Win32Exception();
+                                SendData(Codes.Success.ToString());
                                 break;
                             case "SHUTDOWN":
                                 Process.Start("shutdown", "/s /t 0");
+                                SendData(Codes.Success.ToString());
+                                break;
+                            case "SHOW_HIDE_WINDOW":
+                                IntPtr handle = GetConsoleWindow();
+                                if (IsWindowHidden)
+                                    ShowWindow(handle, SW_SHOW);
+                                else
+                                    ShowWindow(handle, SW_HIDE);
+                                IsWindowHidden = !IsWindowHidden;
+                                break;
+                            #region GET
+                            case "IS_ELEVATED_TASK":
+                                SendBool(IsAdministrator);
                                 break;
                             case "GET_COMPATIBILITY":
-                                SendData("1");
+                                SendData(CompatibilityVersion.ToString());
                                 break;
                             case "GET_HOSTNAME":
                                 SendData(Dns.GetHostName());
@@ -93,9 +119,8 @@ namespace Server
                                     }
                                 }
                                 SendData("ERROR");
-                            IPSent:;
+                                IPSent:;
                                 break;
-                            #region GET
                             case "GET_RAM_FREE":
                                 SendData(computerInfo.AvailablePhysicalMemory.ToString());
                                 break;
@@ -106,57 +131,140 @@ namespace Server
                                 SendData(computerInfo.TotalPhysicalMemory.ToString());
                                 break;
                             case "GET_BATTERY_PERCENTAGE":
-                                try
-                                {
-                                    SendData((SystemInformation.PowerStatus.BatteryLifePercent * 100).ToString());
-                                }
-                                catch (Exception exc)
-                                {
-                                    Console.WriteLine("Exception thrown: " + exc.Message);
-                                    SendData("404");
-                                }
+                                SendData((SystemInformation.PowerStatus.BatteryLifePercent * 100).ToString());
                                 break;
                             case "GET_POWERLINE_STATUS":
                                 SendData(SystemInformation.PowerStatus.PowerLineStatus.ToString());
                                 break;
                             case "IS_MOBILE_DEVICE":
-                                if (systemPowerCapabilites.LidPresent)
-                                {
-                                    SendData("Yee");
-                                }
-                                else
-                                {
-                                    SendData("Noo");
-                                }
+                                // determine if device is a notebook or desktop if the lid is present
+                                // needed because SystemInformation.PowerStatus.BatteryLifePercent hangs if the computer is a desktop
+                                SendBool(systemPowerCapabilites.LidPresent);
                                 break;
                             #endregion
                             default:
                                 if (In.StartsWith("OPEN_SERIAL_PORT:"))
                                 {
-                                    string str = In.Replace("OPEN_SERIAL_PORT:", "");
+                                    string stre = In.Replace("OPEN_SERIAL_PORT:", "");
                                     int baudRate = int.Parse(ReceiveData());
-                                    serialPort = new SerialPort(str, baudRate);
+                                    serialPort = new SerialPort(stre, baudRate);
                                     serialPort.Open();
                                 }
                                 else if (In.StartsWith("SEND_SERIAL_DATA:"))
                                 {
                                     serialPort.WriteLine(In.Replace("SEND_SERIAL_DATA:", ""));
                                 }
+                                // I have to do this shit because Directory.GetParent on android adds a slash on th start of the path and does shit
+                                else if (In.StartsWith("GET_PARENT_OF:"))
+                                {
+                                    try
+                                    {
+                                        SendData(Directory.GetParent(In.Replace("GET_PARENT_OF:", "")).FullName);
+                                    }
+                                    catch (Exception exc)
+                                    {
+                                        Console.WriteLine("Exception occured: " + exc.Message);
+                                        SendData(In.Replace("GET_PARENT_OF:", ""));
+                                    }
+                                }
+                                else if (In.StartsWith("GET_ALL_FOLDERS_IN:"))
+                                {
+                                    try
+                                    {
+                                        string[] dirs = Directory.GetDirectories(In.Replace("GET_ALL_FOLDERS_IN:", ""));
+                                        string str = "";
+                                        for (int i = 0; i < dirs.Length; i++)
+                                        {
+                                            dirs[i] = new DirectoryInfo(dirs[i]).Name;
+                                            str += dirs[i] + "|";
+                                        }
+                                        if (str != "")
+                                        {
+                                            str = str.Remove(str.Length - 1);
+                                            SendData(str);
+                                        }
+                                        else
+                                        {
+                                            SendData("FUCKING NOTHING MAN");
+                                        }
+                                    }
+                                    catch (Exception exc)
+                                    {
+                                        if (exc.Message.EndsWith("denied."))
+                                        {
+                                            //access denied
+                                            SendData("*EXCEPTION:" + exc.Message);
+                                        }
+                                    }
+                                }
+                                else if (In.StartsWith("GET_ALL_FILES_IN:"))
+                                {
+                                    try
+                                    {
+                                        string[] files = Directory.GetFiles(In.Replace("GET_ALL_FILES_IN:", ""));
+                                        string str = "";
+                                        for (int i = 0; i < files.Length; i++)
+                                        {
+                                            files[i] = new DirectoryInfo(files[i]).Name;
+                                            str += files[i] + "|";
+                                        }
+                                        if (str != "")
+                                        {
+                                            str = str.Remove(str.Length - 1);
+                                            SendData(str);
+                                        }
+                                        else
+                                        {
+                                            SendData("FUCKING NOTHING MAN");
+                                        }
+                                    }
+                                    catch (Exception exc)
+                                    {
+                                        if (exc.Message.EndsWith("denied."))
+                                        {
+                                            //access denied
+                                            SendData("*EXCEPTION:" + exc.Message);
+                                        }
+                                    }
+                                }
+                                else if (In.StartsWith("GET_FILE:"))
+                                {
+                                    socket.SendFile(In.Replace("GET_FILE:", ""));
+                                }
+                                else if (In.StartsWith("START_PROCESS:"))
+                                {
+                                    try
+                                    {
+                                        string process = In.Replace("START_PROCESS:", "");
+                                        string arguments = ReceiveData().Replace("ARGS:", "");
+                                        Process.Start(process, arguments);
+                                        SendData(Codes.Success.ToString());
+                                    }
+                                    catch (Exception exc)
+                                    {
+                                        SendData(Codes.Error.ToString() + exc.Message);
+                                    }
+                                }
+                                else
+                                {
+                                    SendData(Codes.Error.ToString());
+                                }
                                 break;
                         }
                     }
-                disconnected:;
+                    disconnected:;
                 }
             }
             catch (Exception exc)
             {
                 Console.WriteLine("Exception thrown: " + exc.Message);
             }
-            Console.WriteLine("Program ended");
+            Console.WriteLine("Program ended, press any key to exit.");
             Console.ReadLine();
         }
     }
 
+    //stolen from pinvoke.net
     public struct SYSTEM_POWER_CAPABILITIES
     {
         [MarshalAs(UnmanagedType.U1)]

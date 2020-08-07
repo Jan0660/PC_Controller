@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "PC_Controller": {
+      "commandName": "Project",
+      "nativeDebugging": false
+    }
+  }
+}
