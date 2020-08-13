@@ -197,11 +197,18 @@ namespace PC_Controller.Views
         {
             //Download
             File file = (sender as MenuItem).BindingContext as File;
-            SendData("GET_FILE:" + file.FullName);
-            byte[] bytes = ReceiveAvailableBytes(1);
-            //System.IO.File.WriteAllBytes(localPath, bytes);
-            ISaveFileInterface service = DependencyService.Get<ISaveFileInterface>();
-            service.SaveFile(file.Name, bytes);
+            if (file.FileType == FileType.File)
+            {
+                SendData("GET_FILE:" + file.FullName);
+                byte[] bytes = ReceiveAvailableBytes(1);
+                //System.IO.File.WriteAllBytes(localPath, bytes);
+                ISaveFileInterface service = DependencyService.Get<ISaveFileInterface>();
+                service.SaveFile(file.Name, bytes);
+            }
+            else
+            {
+                DisplayAlert("sorry not sorry", "Sorry but you can't download entire folders yet.", "ree");
+            }
         }
     }
 }
