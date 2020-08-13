@@ -101,8 +101,9 @@ namespace PC_Controller
                     machines.Add(new Machine { Name = MachineNames[i], IPString = IPs[i], ID = i });
                 }
             }
-            catch (Exception exc)
+            catch
             {
+                // take the user to the add machine screen
                 ToolbarItem_Clicked(null, EventArgs.Empty);
             }
         }

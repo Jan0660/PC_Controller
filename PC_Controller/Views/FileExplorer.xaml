@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="PC_Controller.Views.FileExplorer"
+             Title="File Explorer">
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Add"
+                 Order="Primary"
+                 Priority="0"
+                     Clicked="ToolbarItem_Clicked" />
+        <ToolbarItem Text="Refresh"
+                 Order="Secondary"
+                 Priority="0"
+                     Clicked="ToolbarItem_Clicked_1" />
+    </ContentPage.ToolbarItems>
+    <ContentPage.Content>
+        <StackLayout>
+            <Label x:Name="label" Text="Showing contents of your cum chalice" HorizontalOptions="Fill" VerticalOptions="Start"/>
+            <ListView x:Name="listView" ItemTapped="listView_ItemTapped" SelectionMode="None" HorizontalOptions="Fill" VerticalOptions="Fill"
+              ItemsSource="{Binding filesList}" IsGroupingEnabled="True">
+                <ListView.GroupHeaderTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <Label Text="{Binding Heading}" FontSize="Title" TextColor="Black" VerticalOptions="End"/>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.GroupHeaderTemplate>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <TextCell Text="{Binding Name}" Detail="{Binding FullName}">
+                            <TextCell.ContextActions>
+                                <MenuItem Clicked="MenuItem_Clicked_1"
+                      CommandParameter="{Binding FullName}"
+                      Text="Rename" />
+                                <MenuItem Clicked="MenuItem_Clicked"
+                      CommandParameter="{Binding FullName}"
+                      Text="Delete" IsDestructive="True" />
+                                <MenuItem Clicked="MenuItem_Clicked_2"
+                      CommandParameter="{Binding FullName}"
+                      Text="Download" IsDestructive="True" />
+                            </TextCell.ContextActions>
+                        </TextCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>
