@@ -53,6 +53,7 @@ namespace Server
         #endregion
         static void Main(string[] args)
         {
+            Console.WriteLine("https://github.com/Jan0660/PC_Controller Version 0.1");
             GetPwrCapabilities(out systemPowerCapabilites);
             try
             {
