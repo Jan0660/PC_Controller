@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="PC_Controller.Views.FilePreviewPage">
+    <ContentPage.Content>
+        <StackLayout>
+            <Label Text="Path:,Size:"
+                   x:Name="InfoLabel"
+                VerticalOptions="Start" 
+                HorizontalOptions="Fill" />
+            <StackLayout x:Name="PreviewConfirmLayout" IsVisible="False">
+                <Button Clicked="Button_Clicked" Text="Tap to preview"/>
+            </StackLayout>
+            <ScrollView x:Name="PreviewLayout" IsVisible="False">
+                <StackLayout>
+                    <Image x:Name="PreviewImage" IsVisible="false" HorizontalOptions="Center" VerticalOptions="Start"/>
+                    <Label x:Name="PreviewLabel" IsVisible="false" HorizontalOptions="Fill" VerticalOptions="Start"/>
+                </StackLayout>
+            </ScrollView>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

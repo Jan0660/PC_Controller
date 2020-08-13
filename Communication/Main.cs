@@ -5,6 +5,8 @@ using System.Dynamic;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
+
 namespace Communication
 {
     public static class Main
@@ -32,11 +34,12 @@ namespace Communication
         {
             byte[] bytesSent = Encoding.ASCII.GetBytes(str);
 
-            if (socket == null)
-            {
-                // TODO: deal with it
-            }
+            //if (socket == null)
+            //{
+            // TODO: deal with it
+            //}
             Console.WriteLine("sent " + str);
+            Debug.WriteLine("sent " + str);
             socket.Send(bytesSent, bytesSent.Length, 0);
         }
 
@@ -47,7 +50,7 @@ namespace Communication
             return received;
         }
 
-        public static byte[] ReceiveBytes(int bufferSize = 256)
+        public static byte[] ReceiveBytes()
         {
 
             List<byte> received = new List<byte>();
@@ -69,6 +72,21 @@ namespace Communication
                 }
                 byte[] bytesReceived = new byte[available];
                 bytes = socket.Receive(bytesReceived, available, 0);
+                received.AddRange(bytesReceived);
+            }
+            while (socket.Available != 0);
+            return received.ToArray();
+        }
+
+        public static byte[] ReceiveAvailableBytes(int buffer)
+        {
+            List<byte> received = new List<byte>();
+            int bytes = 0;
+            // receive bytes until there are no bytes to be received
+            do
+            {
+                byte[] bytesReceived = new byte[buffer];
+                bytes = socket.Receive(bytesReceived, buffer, 0);
                 received.AddRange(bytesReceived);
             }
             while (socket.Available != 0);

@@ -4,6 +4,9 @@ using System.Text;
 using static Communication.Main;
 namespace Communication
 {
+    /// <summary>
+    /// This is a class to hold constant properties about the machine the server app is running on. 
+    /// </summary>
     public static class PCInformation
     {
         public static bool IsPortableDevice;
@@ -12,6 +15,9 @@ namespace Communication
         public static bool IsElevatedTask;
         public static int CompatibilityVersion;
 
+        /// <summary>
+        /// Update all of the information.
+        /// </summary>
         public static void UpdateAll()
         {
             string str = SendAndReceive("IS_MOBILE_DEVICE");

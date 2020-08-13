@@ -15,6 +15,7 @@ using System.Windows.Forms;
 using System.Security.Principal;
 using Communication;
 using System.IO;
+using System.Threading;
 
 namespace Server
 {
@@ -220,11 +221,7 @@ namespace Server
                                     }
                                     catch (Exception exc)
                                     {
-                                        if (exc.Message.EndsWith("denied."))
-                                        {
-                                            //access denied
-                                            SendData("*EXCEPTION:" + exc.Message);
-                                        }
+                                        SendData("*EXCEPTION:" + exc.Message);
                                     }
                                 }
                                 else if (In.StartsWith("GET_FILE:"))
@@ -241,6 +238,103 @@ namespace Server
                                         SendData(Codes.Success.ToString());
                                     }
                                     catch (Exception exc)
+                                    {
+                                        SendData(Codes.Error.ToString() + exc.Message);
+                                    }
+                                }
+                                else if (In.StartsWith("CREATE_FOLDER:"))
+                                {
+                                    try
+                                    {
+                                        Directory.CreateDirectory(In.Replace("CREATE_FOLDER:", ""));
+                                        SendData(Codes.Success.ToString());
+                                    }
+                                    catch (Exception exc)
+                                    {
+                                        SendData(Codes.Error.ToString() + exc.Message);
+                                    }
+                                }
+                                else if (In.StartsWith("MOVE_FILE:"))
+                                {
+                                    try
+                                    {
+                                        string str = In.Remove(0, "MOVE_FILE:".Length);
+                                        File.Move(str.Split('|')[0], str.Split('|')[1]);
+                                        SendData(Codes.Success.ToString());
+                                    }
+                                    catch(Exception exc)
+                                    {
+                                        SendData(Codes.Error.ToString() + exc.Message);
+                                    }
+                                }
+                                else if (In.StartsWith("MOVE_FOLDER:"))
+                                {
+                                    try
+                                    {
+                                        string str = In.Remove(0, "MOVE_FOLDER:".Length);
+                                        Directory.Move(str.Split('|')[0], str.Split('|')[1]);
+                                        SendData(Codes.Success.ToString());
+                                    }
+                                    catch (Exception exc)
+                                    {
+                                        SendData(Codes.Error.ToString() + exc.Message);
+                                    }
+                                }
+                                else if (In.StartsWith("DELETE_FILE:"))
+                                {
+                                    try
+                                    {
+                                        string str = In.Remove(0, "DELETE_FILE:".Length);
+                                        File.Delete(str);
+                                        SendData(Codes.Success.ToString());
+                                    }
+                                    catch(Exception exc)
+                                    {
+                                        SendData(Codes.Error.ToString() + exc.Message);
+                                    }
+                                }
+                                else if (In.StartsWith("DELETE_FOLDER:"))
+                                {
+                                    try
+                                    {
+                                        string str = In.Remove(0, "DELETE_FOLDER:".Length);
+                                        Directory.Delete(str, true);
+                                        SendData(Codes.Success.ToString());
+                                    }
+                                    catch (Exception exc)
+                                    {
+                                        SendData(Codes.Error.ToString() + exc.Message);
+                                    }
+                                }
+                                else if (In.StartsWith("GET_FILE_SIZE:"))
+                                {
+                                    try
+                                    {
+                                        string str = In.Remove(0, "GET_FILE_SIZE:".Length);
+                                        SendData(new FileInfo(str).Length.ToString());
+                                    }
+                                    catch (Exception exc)
+                                    {
+                                        SendData(Codes.Error.ToString() + exc.Message);
+                                    }
+                                }
+                                else if (In.StartsWith("FILE_EXISTS:"))
+                                {
+                                    string str = In.Remove(0, "FILE_EXISTS:".Length);
+                                    SendData(Codes.FromBool(File.Exists(str)).ToString());
+                                }
+                                else if (In.StartsWith("UPLOAD_FILE_TO:"))
+                                {
+                                    try
+                                    {
+                                        string str = In.Remove(0, "UPLOAD_FILE_TO:".Length);
+                                        SendData(Codes.True.ToString());
+                                        byte[] fileBytes = ReceiveAvailableBytes(1);
+                                        File.WriteAllBytes(str, fileBytes);
+                                        SendData(Codes.Success.ToString());
+                                        Console.WriteLine("Received " + fileBytes.Length + " bytes");
+                                    }
+                                    catch(Exception exc)
                                     {
                                         SendData(Codes.Error.ToString() + exc.Message);
                                     }

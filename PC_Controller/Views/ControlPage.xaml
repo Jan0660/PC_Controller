@@ -20,10 +20,10 @@
                    VerticalOptions="Start"/>
             <Label x:Name="PCInfo2"/>
             <Label x:Name="PowerInfo"/>
-            <Button Text="File system"
+            <Button Text="File Explorer"
                     HorizontalOptions="Fill"
                     VerticalOptions="Start"
-                    Clicked="Button_Clicked_4"/>
+                    Clicked="Button_Clicked_7"/>
             <Button Text="Server settings"
                     HorizontalOptions="Fill"
                     VerticalOptions="Start"
