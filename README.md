@@ -14,14 +14,18 @@ A way to do things you can do on your computer, from your computer, from your ph
 - Start a process remotely
 - Send data over serial
 - Remotely log off or shutdown
+- File explorer: download, upload, delete...
 
 ## Planned features:
-- File explorer: download, upload, delete...
+- Download entire folders in File Explorer
+- Troll toys - rickroll, open a message box...
 
 ## [Trello board](https://trello.com/b/jMexVf6o/pc-controller)
 
-## Please note that I don't have an IOS device and can't test the app. Anyone is welcome to fix the IOS project!
-
 # Screenshots:
-![](https://i.imgur.com/4FjZOKj.png)
+![](https://i.imgur.com/Z39cZWL.png)
 ![](https://i.imgur.com/NE4Enpj.png)
+![](https://i.imgur.com/9O3js7D.png)
+![](https://i.imgur.com/FPmczu9.png)
+
+## Please note that I don't have an IOS device and can't test the app. Anyone is welcome to fix the IOS project!
