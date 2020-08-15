@@ -20,8 +20,7 @@ namespace PC_Controller.Views
 
         private void Button_Clicked(object sender, EventArgs e)
         {
-            SendData("START_PROCESS:" + ProcessEntry.Text);
-            SendData("ARGS:" + ArgumentsEntry.Text);
+            SendData("START_PROCESS:" + ProcessEntry.Text + "|" + ArgumentsEntry.Text);
             string str = ReceiveData();
             if (str == Codes.Success.ToString())
             {

@@ -14,40 +14,46 @@
                  Priority="0" />
     </ContentPage.ToolbarItems>
     <ContentPage.Content>
-        <StackLayout>
-            <Label x:Name="PCInfo1"
+        <ScrollView>
+            <StackLayout>
+                <Label x:Name="PCInfo1"
                    HorizontalOptions="StartAndExpand"
                    VerticalOptions="Start"/>
-            <Label x:Name="PCInfo2"/>
-            <Label x:Name="PowerInfo"/>
-            <Button Text="File Explorer"
+                <Label x:Name="PCInfo2"/>
+                <Label x:Name="PowerInfo"/>
+                <Button Text="File explorer"
                     HorizontalOptions="Fill"
                     VerticalOptions="Start"
                     Clicked="Button_Clicked_7"/>
-            <Button Text="Server settings"
+                <Button Text="Troll toys"
+                    HorizontalOptions="Fill"
+                    VerticalOptions="Start"
+                    Clicked="Button_Clicked_4"/>
+                <Button Text="Server settings"
                     HorizontalOptions="Fill"
                     VerticalOptions="Start"
                     Clicked="Button_Clicked_5"/>
-            <Button Text="Serial"
+                <Button Text="Serial"
                     HorizontalOptions="Fill"
                     VerticalOptions="Start"
                     Clicked="Button_Clicked_3"/>
-            <Button Text="Start process"
+                <Button Text="Start process"
                     HorizontalOptions="Fill"
                     VerticalOptions="Start"
                     Clicked="Button_Clicked_6"/>
-            <Button Text="Log Off"
+                <Button Text="Log Off"
                     HorizontalOptions="Fill"
                     VerticalOptions="Start"
                     Clicked="Button_Clicked_1"/>
-            <Button Text="Shutdown"
+                <Button Text="Shutdown"
                     HorizontalOptions="Fill"
                     VerticalOptions="Start"
                     Clicked="Button_Clicked_2"/>
-            <Button Text="Test"
+                <Button Text="Test"
                     HorizontalOptions="Fill"
                     VerticalOptions="Start"
                     Clicked="Button_Clicked"/>
-        </StackLayout>
+            </StackLayout>
+        </ScrollView>
     </ContentPage.Content>
 </ContentPage>

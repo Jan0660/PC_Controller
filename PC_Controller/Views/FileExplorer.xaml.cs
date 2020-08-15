@@ -30,6 +30,7 @@ namespace PC_Controller.Views
         public FileExplorer()
         {
             InitializeComponent();
+            FolderUpToolbar.IconImageSource = ImageSource.FromResource("PC_Controller.Resources.FolderUp.png");
             Update();
         }
 
@@ -209,6 +210,12 @@ namespace PC_Controller.Views
             {
                 DisplayAlert("sorry not sorry", "Sorry but you can't download entire folders yet.", "ree");
             }
+        }
+
+        private void FolderUpToolbar_Clicked(object sender, EventArgs e)
+        {
+            directory = Request("GET_PARENT_OF:" + directory);
+            Update();
         }
     }
 }

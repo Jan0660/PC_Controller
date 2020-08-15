@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="PC_Controller.SettingsPage"
+             Title="Settings">
+    <ContentPage.Content>
+        <ScrollView>
+            <StackLayout>
+                <Label Text="Maximum Auto-Preview Image Size"
+                   VerticalOptions="Start"
+                   HorizontalOptions="Fill"/>
+                <Entry Placeholder="Maximum Auto-Preview Image Size"
+                   x:Name="MaxAutoImageSizeEntry"
+                   VerticalOptions="Start" 
+                       Keyboard="Numeric"
+                   HorizontalOptions="Fill"/>
+
+                <Label Text="Maximum Auto-Preview Text Size"
+                   VerticalOptions="Start"
+                   HorizontalOptions="Fill"/>
+                <Entry Placeholder="Maximum Auto-Preview Text Size"
+                   x:Name="MaxAutoTextSizeEntry"
+                   VerticalOptions="Start" 
+                       Keyboard="Numeric"
+                   HorizontalOptions="Fill"/>
+                <Label Text="Show text files in a label"
+                       HorizontalOptions="Fill"
+                       VerticalOptions="Start"/>
+                <Switch x:Name="TextInLabel" HorizontalOptions="End" VerticalOptions="Start"/>
+                <Button Text="Save"
+                    VerticalOptions="Start"
+                    HorizontalOptions="Fill"
+                    Clicked="Button_Clicked"/>
+            </StackLayout>
+        </ScrollView>
+    </ContentPage.Content>
+</ContentPage>

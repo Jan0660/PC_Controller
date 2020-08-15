@@ -10,7 +10,11 @@
         <ToolbarItem Text="Add"
                  Order="Primary"
                      Clicked="ToolbarItem_Clicked"
-                 Priority="0" />
+                 Priority="10" />
+        <ToolbarItem Text="Settings"
+                 Order="Primary"
+                     Clicked="ToolbarItem_Clicked_1"
+                 Priority="5" />
     </ContentPage.ToolbarItems>
     <ListView x:Name="listView" ItemTapped="listView_ItemTapped" SelectionMode="None"
               ItemsSource="{Binding Machines}">

@@ -11,7 +11,7 @@ namespace PC_Controller
 {
     public partial class App : Application
     {
-        public const int CompatibilityVersion = 1;
+        public const int CompatibilityVersion = 2;
         /// <summary>
         /// Dont disconnect when app is suspended
         /// </summary>
@@ -19,7 +19,7 @@ namespace PC_Controller
         public App()
         {
             InitializeComponent();
-
+            Settings.Load();
             MainPage = new NavigationPage(new MainPage());
         }
 

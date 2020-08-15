@@ -116,5 +116,11 @@ namespace PC_Controller
             EditMachinePage page = new EditMachinePage(ref machines, machine.ID);
             Navigation.PushAsync(page);
         }
+
+        private void ToolbarItem_Clicked_1(object sender, EventArgs e)
+        {
+            SettingsPage page = new SettingsPage();
+            Navigation.PushAsync(page);
+        }
     }
 }

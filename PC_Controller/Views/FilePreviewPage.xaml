@@ -15,6 +15,7 @@
                 <StackLayout>
                     <Image x:Name="PreviewImage" IsVisible="false" HorizontalOptions="Center" VerticalOptions="Start"/>
                     <Label x:Name="PreviewLabel" IsVisible="false" HorizontalOptions="Fill" VerticalOptions="Start"/>
+                    <Editor x:Name="PreviewEditor" IsVisible="false" HorizontalOptions="Fill" VerticalOptions="Start"/>
                 </StackLayout>
             </ScrollView>
         </StackLayout>

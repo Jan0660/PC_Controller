@@ -4,9 +4,11 @@
              x:Class="PC_Controller.Views.FileExplorer"
              Title="File Explorer">
     <ContentPage.ToolbarItems>
+        <ToolbarItem Order="Primary" Priority="20" Text="UP" x:Name="FolderUpToolbar"
+                     IconImageSource="FolderUp.png" Clicked="FolderUpToolbar_Clicked"/>
         <ToolbarItem Text="Add"
                  Order="Primary"
-                 Priority="0"
+                 Priority="10"
                      Clicked="ToolbarItem_Clicked" />
         <ToolbarItem Text="Refresh"
                  Order="Secondary"

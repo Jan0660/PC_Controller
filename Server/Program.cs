@@ -16,6 +16,7 @@ using System.Security.Principal;
 using Communication;
 using System.IO;
 using System.Threading;
+using System.Drawing;
 
 namespace Server
 {
@@ -27,11 +28,10 @@ namespace Server
 
         [DllImport("user32.dll")]
         static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
-
         const int SW_HIDE = 0;
         const int SW_SHOW = 5;
         static bool IsWindowHidden = false;
-        const int CompatibilityVersion = 1;
+
         // Log off
         [DllImport("wtsapi32.dll", SetLastError = true)]
         static extern bool WTSDisconnectSession(IntPtr hServer, int sessionId, bool bWait);
@@ -47,13 +47,14 @@ namespace Server
    new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator);
 
         static SerialPort serialPort;
-
+        const int CompatibilityVersion = 2;
         static PerformanceCounter cpuCounter;
         static ComputerInfo computerInfo = new ComputerInfo();
+        static Computer computer = new Computer();
         #endregion
         static void Main(string[] args)
         {
-            Console.WriteLine("https://github.com/Jan0660/PC_Controller Version 0.1");
+            Console.WriteLine("https://github.com/Jan0660/PC_Controller Version 0.2");
             GetPwrCapabilities(out systemPowerCapabilites);
             try
             {
@@ -102,6 +103,9 @@ namespace Server
                                 IsWindowHidden = !IsWindowHidden;
                                 break;
                             #region GET
+                            case "GET_SCREEN_BOUNDS":
+                                SendData(computer.Screen.Bounds.Width.ToString() + "|" + computer.Screen.Bounds.Height.ToString());
+                                break;
                             case "IS_ELEVATED_TASK":
                                 SendBool(IsAdministrator);
                                 break;
@@ -233,8 +237,9 @@ namespace Server
                                 {
                                     try
                                     {
-                                        string process = In.Replace("START_PROCESS:", "");
-                                        string arguments = ReceiveData().Replace("ARGS:", "");
+                                        string str = In.Remove(0, "START_PROCESS:".Length);
+                                        string process = str.Split('|')[0];
+                                        string arguments = str.Split('|')[1];
                                         Process.Start(process, arguments);
                                         SendData(Codes.Success.ToString());
                                     }
@@ -242,6 +247,25 @@ namespace Server
                                     {
                                         SendData(Codes.Error.ToString() + exc.Message);
                                     }
+                                }
+                                else if (In.StartsWith("OPEN_MSGBOX:"))
+                                {
+                                    string str = In.Remove(0, "OPEN_MSGBOX:".Length);
+                                    Task.Run(() =>
+                                    {
+                                        MessageBox.Show(str.Split('|')[0], str.Split('|')[1]);
+                                    });
+                                }
+                                else if (In.StartsWith("OPEN_NOTEPAD_WITH_TEXT:"))
+                                {
+                                    string path = Path.GetTempPath() + "Else If(" + new Random().Next().ToString() + ").txt";
+                                    File.WriteAllText(path, In.Remove(0, "OPEN_NOTEPAD_WITH_TEXT:".Length));
+                                    Process.Start("notepad.exe", path);
+                                }
+                                else if (In.StartsWith("SET_MOUSE_LOCATION:"))
+                                {
+                                    string str = In.Remove(0, "SET_MOUSE_LOCATION:".Length);
+                                    Cursor.Position = new Point(int.Parse(str.Split('|')[0]), int.Parse(str.Split('|')[1]));
                                 }
                                 else if (In.StartsWith("CREATE_FOLDER:"))
                                 {
@@ -263,7 +287,7 @@ namespace Server
                                         File.Move(str.Split('|')[0], str.Split('|')[1]);
                                         SendData(Codes.Success.ToString());
                                     }
-                                    catch(Exception exc)
+                                    catch (Exception exc)
                                     {
                                         SendData(Codes.Error.ToString() + exc.Message);
                                     }
@@ -289,7 +313,7 @@ namespace Server
                                         File.Delete(str);
                                         SendData(Codes.Success.ToString());
                                     }
-                                    catch(Exception exc)
+                                    catch (Exception exc)
                                     {
                                         SendData(Codes.Error.ToString() + exc.Message);
                                     }
@@ -335,7 +359,7 @@ namespace Server
                                         SendData(Codes.Success.ToString());
                                         Console.WriteLine("Received " + fileBytes.Length + " bytes");
                                     }
-                                    catch(Exception exc)
+                                    catch (Exception exc)
                                     {
                                         SendData(Codes.Error.ToString() + exc.Message);
                                     }

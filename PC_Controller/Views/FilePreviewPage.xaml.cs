@@ -33,7 +33,7 @@ Size: { file.Size} bytes";
                 case ".png":
                 case ".jpg":
                 case ".bmp":
-                    if (file.Size < 400000 | confirm)
+                    if (file.Size < Settings.MaxAutomaticImagePreviewSize | confirm)
                     {
                         ViewImage();
                     }
@@ -43,12 +43,21 @@ Size: { file.Size} bytes";
                     }
                     break;
                 case ".txt":
-                    if(file.Size < 10000 | confirm)
+                    if(file.Size < Settings.MaxAutomaticTextPreviewSize | confirm)
                     {
                         PreviewLabel.IsVisible = true;
                         PreviewLayout.IsVisible = true;
                         SendData("GET_FILE:" + file.FullName);
-                        PreviewLabel.Text = Encoding.ASCII.GetString(ReceiveBytes());
+                        if (Settings.ViewTextFilesInLabel)
+                        {
+                            PreviewLabel.IsVisible = true;
+                            PreviewLabel.Text = Encoding.ASCII.GetString(ReceiveBytes());
+                        }
+                        else
+                        {
+                            PreviewEditor.IsVisible = true;
+                            PreviewEditor.Text = Encoding.ASCII.GetString(ReceiveBytes());
+                        }
                     }
                     else
                     {

@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="PC_Controller.Views.TrollToysPage">
+    <ContentPage.Content>
+        <ScrollView>
+            <StackLayout>
+                <Button Text="Show/Hide console window"
+                    VerticalOptions="Start"
+                    HorizontalOptions="Fill"
+                    Clicked="Button_Clicked"/>
+                <Button Text="RickRoll"
+                    VerticalOptions="Start"
+                    HorizontalOptions="Fill"
+                    Clicked="Button_Clicked_1"/>
+                <Slider x:Name="slider"
+                    VerticalOptions="Start"
+                    Maximum="10"
+                    Minimum="1"
+                    Value="3"
+                    ValueChanged="slider_ValueChanged"
+                    HorizontalOptions="Fill"/>
+                <Button x:Name="button"
+                    VerticalOptions="Start"
+                    HorizontalOptions="Fill"
+                    Text="Open 3 random things"
+                    Clicked="Button_Clicked_2"/>
+                <Editor Placeholder="Title"
+                        VerticalOptions="Start"
+                        HorizontalOptions="Fill"
+                        x:Name="MsgBoxTitleEntry"/>
+                <Editor Placeholder="Message"
+                        VerticalOptions="Start"
+                        HorizontalOptions="Fill"
+                        x:Name="MsgBoxMessageEntry"/>
+                <Button Text="Show message box"
+                        VerticalOptions="Start"
+                        HorizontalOptions="Fill"
+                        Clicked="Button_Clicked_3"/>
+                <Button Text="Set Mouse to rando location"
+                        VerticalOptions="Start"
+                        HorizontalOptions="Fill"
+                        Clicked="Button_Clicked_4"/>
+                <Editor Placeholder="Notepad text"
+                        VerticalOptions="Start"
+                        HorizontalOptions="Fill"
+                        x:Name="NotepadTextEditor"/>
+                <Button Text="Open notepad with text"
+                        VerticalOptions="Start"
+                        HorizontalOptions="Fill"
+                        Clicked="Button_Clicked_5"/>
+            </StackLayout>
+        </ScrollView>
+    </ContentPage.Content>
+</ContentPage>

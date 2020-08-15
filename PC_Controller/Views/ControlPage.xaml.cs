@@ -170,5 +170,11 @@ namespace PC_Controller
             Views.FileExplorer page = new Views.FileExplorer();
             Navigation.PushAsync(page);
         }
+
+        private void Button_Clicked_4(object sender, EventArgs e)
+        {
+            TrollToysPage page = new TrollToysPage();
+            Navigation.PushAsync(page);
+        }
     }
 }
